@@ -14,6 +14,7 @@ RUN pip install --upgrade pip setuptools wheel
 
 COPY requirements.txt .
 
+ARG CACHEBUST=1
 RUN pip install --no-cache-dir -r requirements.txt
 
 # 复制应用代码
