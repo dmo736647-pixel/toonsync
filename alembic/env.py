@@ -3,6 +3,7 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context
+import os
 
 # 导入应用配置和模型
 from app.core.config import settings
@@ -12,8 +13,10 @@ from app.models import *  # noqa: F401, F403
 # Alembic Config对象
 config = context.config
 
-# 设置数据库URL
-config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
+# 设置数据库URL - 确保是字符串
+database_url = settings.DATABASE_URL or os.getenv("DATABASE_URL")
+if database_url:
+    config.set_main_option("sqlalchemy.url", database_url)
 
 # 配置日志
 if config.config_file_name is not None:
@@ -26,6 +29,10 @@ target_metadata = Base.metadata
 def run_migrations_offline() -> None:
     """在'离线'模式下运行迁移"""
     url = config.get_main_option("sqlalchemy.url")
+    if not url:
+        print("WARNING: DATABASE_URL not set, skipping migrations")
+        return
+        
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -39,6 +46,11 @@ def run_migrations_offline() -> None:
 
 def run_migrations_online() -> None:
     """在'在线'模式下运行迁移"""
+    url = config.get_main_option("sqlalchemy.url")
+    if not url:
+        print("WARNING: DATABASE_URL not set, skipping migrations")
+        return
+        
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
