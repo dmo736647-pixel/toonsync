@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Webtoon Video Maker - Storytelling First</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%);
+            overflow-x: hidden;
+        }
+        
+        .neo-glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .holographic {
+            background: linear-gradient(45deg, 
+                rgba(255, 0, 150, 0.1) 0%,
+                rgba(0, 255, 255, 0.1) 25%,
+                rgba(255, 255, 0, 0.1) 50%,
+                rgba(150, 0, 255, 0.1) 75%,
+                rgba(255, 0, 150, 0.1) 100%);
+            background-size: 400% 400%;
+            animation: holographic-shift 8s ease-in-out infinite;
+        }
+        
+        @keyframes holographic-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .neural-network {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .neural-node {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(0, 255, 255, 0.6);
+            border-radius: 50%;
+            animation: neural-pulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes neural-pulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+        
+        .ai-glow {
+            box-shadow: 
+                0 0 20px rgba(0, 255, 255, 0.3),
+                0 0 40px rgba(0, 255, 255, 0.2),
+                0 0 60px rgba(0, 255, 255, 0.1);
+            animation: ai-pulse 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes ai-pulse {
+            from { box-shadow: 0 0 20px rgba(0, 255, 255, 0.3), 0 0 40px rgba(0, 255, 255, 0.2); }
+            to { box-shadow: 0 0 30px rgba(0, 255, 255, 0.5), 0 0 60px rgba(0, 255, 255, 0.3); }
+        }
+        
+        .quantum-card {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        .quantum-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00ffff, #ff00ff, #ffff00, #00ffff);
+            background-size: 400% 400%;
+            animation: quantum-border 4s ease-in-out infinite;
+            border-radius: inherit;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .quantum-card:hover::before {
+            opacity: 1;
+        }
+        
+        @keyframes quantum-border {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .quantum-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+        }
+        
+        .floating-element {
+            animation: float-3d 6s ease-in-out infinite;
+        }
+        
+        @keyframes float-3d {
+            0%, 100% { transform: translateY(0px) rotateX(0deg); }
+            33% { transform: translateY(-20px) rotateX(5deg); }
+            66% { transform: translateY(10px) rotateX(-3deg); }
+        }
+        
+        .text-hologram {
+            background: linear-gradient(45deg, #00ffff, #ff00ff, #ffff00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: hologram-text 3s ease-in-out infinite;
+        }
+        
+        @keyframes hologram-text {
+            0%, 100% { filter: hue-rotate(0deg); }
+            50% { filter: hue-rotate(180deg); }
+        }
+        
+        /* 语言选项hover效果 */
+        .language-option {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        /* 滚动条样式 */
+        #languageDropdown::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        #languageDropdown::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+        
+        #languageDropdown::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+        
+        #languageDropdown::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen relative">
+    <!-- Neural Network Background -->
+    <div class="neural-network">
+        <div class="neural-node" style="top: 10%; left: 20%; animation-delay: 0s;"></div>
+        <div class="neural-node" style="top: 30%; left: 80%; animation-delay: 1s;"></div>
+        <div class="neural-node" style="top: 60%; left: 15%; animation-delay: 2s;"></div>
+        <div class="neural-node" style="top: 80%; left: 70%; animation-delay: 0.5s;"></div>
+        <div class="neural-node" style="top: 20%; left: 50%; animation-delay: 1.5s;"></div>
+    </div>
+
+    <!-- Language Dropdown (Moved to body level) -->
+    <div id="languageDropdown" class="fixed neo-glass rounded-2xl p-2 w-48 hidden flex-col gap-1 border border-white/20 shadow-2xl backdrop-blur-xl bg-black/80" style="z-index: 2147483647; max-height: 300px; overflow-y: auto;">
+        <button class="language-option w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 transition-all text-white text-sm flex items-center space-x-2" data-lang="en">
+            <span class="text-lg">🇺🇸</span> <span>English</span>
+        </button>
+        <button class="language-option w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 transition-all text-white text-sm flex items-center space-x-2" data-lang="zh">
+            <span class="text-lg">🇨🇳</span> <span>中文</span>
+        </button>
+        <button class="language-option w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 transition-all text-white text-sm flex items-center space-x-2" data-lang="ja">
+            <span class="text-lg">🇯🇵</span> <span>日本語</span>
+        </button>
+        <button class="language-option w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 transition-all text-white text-sm flex items-center space-x-2" data-lang="ko">
+            <span class="text-lg">🇰🇷</span> <span>한국어</span>
+        </button>
+        <button class="language-option w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 transition-all text-white text-sm flex items-center space-x-2" data-lang="es">
+            <span class="text-lg">🇪🇸</span> <span>Español</span>
+        </button>
+        <button class="language-option w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 transition-all text-white text-sm flex items-center space-x-2" data-lang="fr">
+            <span class="text-lg">🇫🇷</span> <span>Français</span>
+        </button>
+        <button class="language-option w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 transition-all text-white text-sm flex items-center space-x-2" data-lang="de">
+            <span class="text-lg">🇩🇪</span> <span>Deutsch</span>
+        </button>
+    </div>
+
+    <!-- Main Container -->
+    <div class="relative z-10">
+        <!-- Top Navigation -->
+        <nav class="neo-glass border-b border-cyan-500/20">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="flex items-center justify-between h-20">
+                    <div class="flex items-center space-x-8">
+                        <a href="/" class="group flex items-center gap-4 select-none no-underline">
+                            <!-- 1. 图标部分：Sync Wave (同步光波) -->
+                            <div class="relative flex items-center justify-center w-11 h-11">
+                                <!-- 动态光晕背景 -->
+                                <div class="absolute inset-0 bg-gradient-to-tr from-cyan-500 to-purple-600 rounded-full blur-xl opacity-20 group-hover:opacity-40 transition-all duration-500 animate-pulse"></div>
+                                
+                                <!-- 主图标容器 -->
+                                <div class="relative w-full h-full flex items-center justify-center transform group-hover:scale-105 transition-transform duration-300">
+                                    <!-- 抽象流体图标 -->
+                                    <svg class="w-9 h-9" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <!-- 核心 S 型流体带 -->
+                                        <path d="M4 12C4 7.58172 7.58172 4 12 4C14.5 4 16.5 5 17.5 6.5C16 6.5 15 7.5 15 9C15 11.5 18 12.5 20 12C20 16.4183 16.4183 20 12 20C9.5 20 7.5 19 6.5 17.5C8 17.5 9 16.5 9 15C9 12.5 6 11.5 4 12Z" 
+                                              fill="url(#wave-gradient)" 
+                                              stroke="url(#wave-stroke)" stroke-width="0.5"/>
+                                        
+                                        <!-- 内部流动的能量线 -->
+                                        <path d="M7.5 16C7.5 14 9.5 13.5 11 13.5C12.5 13.5 14.5 13 14.5 11" 
+                                              stroke="white" stroke-opacity="0.5" stroke-width="1.5" stroke-linecap="round"/>
+                                        
+                                        <defs>
+                                            <linearGradient id="wave-gradient" x1="4" y1="20" x2="20" y2="4" gradientUnits="userSpaceOnUse">
+                                                <stop stop-color="#06b6d4"/> <!-- Cyan-500 -->
+                                                <stop offset="0.5" stop-color="#8b5cf6"/> <!-- Violet-500 -->
+                                                <stop offset="1" stop-color="#ec4899"/> <!-- Pink-500 -->
+                                            </linearGradient>
+                                            <linearGradient id="wave-stroke" x1="4" y1="4" x2="20" y2="20" gradientUnits="userSpaceOnUse">
+                                                <stop stop-color="white" stop-opacity="0.8"/>
+                                                <stop offset="1" stop-color="white" stop-opacity="0.1"/>
+                                            </linearGradient>
+                                        </defs>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- 2. 文字部分 -->
+                            <div class="flex flex-col">
+                                <div class="flex items-center gap-0.5">
+                                    <!-- Toon: 纯白，字重适中 -->
+                                    <span class="text-2xl font-semibold tracking-tight text-white font-[Inter]">
+                                        Toon
+                                    </span>
+                                    <!-- Sync: 稍微加粗，带一点点光泽感 -->
+                                    <span class="text-2xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white via-cyan-200 to-cyan-400">
+                                        Sync
+                                    </span>
+                                    <!-- .space: 极简点缀 -->
+                                    <div class="ml-2 w-1.5 h-1.5 rounded-full bg-gradient-to-r from-cyan-400 to-purple-500 animate-pulse"></div>
+                                </div>
+                                
+                                <!-- Subtitle: 极简，拉开字间距 -->
+                                <span id="nav-subtitle" class="text-[10px] font-medium text-slate-500 tracking-[0.15em] uppercase group-hover:text-slate-400 transition-colors pl-0.5" data-i18n="navSubtitle">
+                                    Storytelling First
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="flex items-center space-x-6">
+                        <!-- Language Selector -->
+                        <div class="relative" style="position: static;">
+                            <button id="languageSelector" class="flex items-center space-x-3 neo-glass px-4 py-2 rounded-full hover:bg-white/10 transition-all">
+                                <i class="fas fa-globe text-cyan-400"></i>
+                                <span id="currentLanguage" class="text-white text-sm font-medium">🇺🇸 EN</span>
+                                <i class="fas fa-chevron-down text-white/60 text-xs"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Sign In Button -->
+                        <a id="sign-in-btn" href="http://localhost:3000/login" class="px-6 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white rounded-full font-medium transition-all shadow-lg hover:shadow-cyan-500/25" data-i18n="signIn">
+                            Sign In
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section with Input -->
+        <div class="max-w-7xl mx-auto px-6 py-20">
+            <div class="text-center space-y-8 mb-16 relative z-10">
+                <div class="inline-block mb-6 px-4 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-950/30 backdrop-blur-sm">
+                    <span class="text-cyan-400 text-sm font-semibold tracking-wide uppercase">✨ Global First AI Webtoon Maker</span>
+                </div>
+                
+                <h1 id="hero-title" class="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight leading-tight">
+                    Storytelling <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">First</span>
+                </h1>
+                <p id="hero-subtitle" class="text-xl text-slate-300 mb-12 max-w-2xl mx-auto leading-relaxed" data-i18n="heroSubtitle">Create Webtoon Videos with Perfect Character Consistency. The only AI tool that combines Story + Character + Multi-language Lip Sync.</p>
+                
+                <!-- Generator Input Box -->
+                <div class="max-w-3xl mx-auto mb-16 relative group">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500"></div>
+                    <div class="relative bg-[#0f111a] border border-cyan-500/30 rounded-2xl p-2 flex flex-col md:flex-row items-center gap-2 shadow-2xl shadow-cyan-900/20">
+                        <div class="flex-1 w-full relative">
+                            <textarea 
+                                placeholder=""
+                                class="w-full bg-transparent text-white text-xl px-6 py-4 focus:outline-none resize-none h-[70px] md:h-[60px] leading-relaxed placeholder-slate-600 whitespace-normal overflow-hidden"
+                            ></textarea>
+                        </div>
+                        <div class="flex items-center gap-2 w-full md:w-auto px-2 pb-2 md:pb-0">
+                            <button class="p-3 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-white/5" title="Upload Reference Image">
+                                <i class="fas fa-image text-xl"></i>
+                            </button>
+                            <a href="http://localhost:3000/register" class="w-full md:w-auto bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white px-8 py-3 rounded-xl font-bold text-lg transition-all shadow-lg hover:shadow-cyan-500/25 flex items-center justify-center gap-2 whitespace-nowrap">
+                                <span>Generate</span>
+                                <span class="text-xs bg-white/20 px-2 py-0.5 rounded uppercase tracking-wider">Free</span>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Quick Tags -->
+                    <div class="flex flex-wrap justify-center gap-3 mt-4 text-sm text-slate-400">
+                        <span class="px-3 py-1 rounded-full border border-white/5 bg-white/5 hover:bg-white/10 cursor-pointer transition-colors">🚀 Cyberpunk</span>
+                        <span class="px-3 py-1 rounded-full border border-white/5 bg-white/5 hover:bg-white/10 cursor-pointer transition-colors">🌸 Anime Romance</span>
+                        <span class="px-3 py-1 rounded-full border border-white/5 bg-white/5 hover:bg-white/10 cursor-pointer transition-colors">🕵️ Mystery</span>
+                        <span class="px-3 py-1 rounded-full border border-white/5 bg-white/5 hover:bg-white/10 cursor-pointer transition-colors">🏰 Fantasy</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inspiration Gallery -->
+            <div class="py-12">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Get Inspired</h2>
+                    <p class="text-slate-400">Discover what's possible with ToonSync</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Gallery Item 1 -->
+                    <div class="group relative rounded-2xl overflow-hidden aspect-[9/16] cursor-pointer">
+                        <img src="https://image.pollinations.ai/prompt/cyberpunk%20anime%20city%20neon%20lights%20futuristic%20girl%20high%20quality?width=720&height=1280&nologo=true" alt="Gallery 1" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                            <span class="text-cyan-400 text-xs font-bold uppercase tracking-wider mb-2">Sci-Fi</span>
+                            <h3 class="text-white font-bold text-lg">Neon Genesis</h3>
+                        </div>
+                    </div>
+                    
+                    <!-- Gallery Item 2 -->
+                    <div class="group relative rounded-2xl overflow-hidden aspect-[9/16] cursor-pointer mt-0 lg:mt-12">
+                        <img src="https://image.pollinations.ai/prompt/fantasy%20anime%20world%20floating%20islands%20magic%20forest%20elf%20girl?width=720&height=1280&nologo=true" alt="Gallery 2" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                            <span class="text-pink-400 text-xs font-bold uppercase tracking-wider mb-2">Fantasy</span>
+                            <h3 class="text-white font-bold text-lg">Ethereal Dreams</h3>
+                        </div>
+                    </div>
+
+                    <!-- Gallery Item 3 -->
+                    <div class="group relative rounded-2xl overflow-hidden aspect-[9/16] cursor-pointer">
+                        <img src="https://image.pollinations.ai/prompt/anime%20noir%20detective%20rainy%20city%20dark%20atmosphere%20mystery?width=720&height=1280&nologo=true" alt="Gallery 3" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                            <span class="text-purple-400 text-xs font-bold uppercase tracking-wider mb-2">Noir</span>
+                            <h3 class="text-white font-bold text-lg">Shadow City</h3>
+                        </div>
+                    </div>
+
+                    <!-- Gallery Item 4 -->
+                    <div class="group relative rounded-2xl overflow-hidden aspect-[9/16] cursor-pointer mt-0 lg:mt-12">
+                        <img src="https://image.pollinations.ai/prompt/anime%20action%20battle%20scene%20dynamic%20pose%20effects%20mecha%20warrior?width=720&height=1280&nologo=true" alt="Gallery 4" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                            <span class="text-yellow-400 text-xs font-bold uppercase tracking-wider mb-2">Action</span>
+                            <h3 class="text-white font-bold text-lg">Cyber Strike</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Features -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+                <div class="neo-glass rounded-3xl p-8 quantum-card holographic text-center">
+                    <div class="text-6xl mb-4">🎭</div>
+                    <h3 class="text-2xl font-bold text-white mb-4" data-i18n="feature1Title">Storytelling First</h3>
+                    <p class="text-white/70" data-i18n="feature1Desc">Generate complete story arcs with character development and emotional progression. Not just videos, but meaningful narratives.</p>
+                </div>
+                
+                <div class="neo-glass rounded-3xl p-8 quantum-card holographic text-center">
+                    <div class="text-6xl mb-4">👥</div>
+                    <h3 class="text-2xl font-bold text-white mb-4" data-i18n="feature2Title">Character Consistency</h3>
+                    <p class="text-white/70" data-i18n="feature2Desc">Maintain consistent character appearance across scenes. One character, multiple scenes, perfect consistency every time.</p>
+                </div>
+                
+                <div class="neo-glass rounded-3xl p-8 quantum-card holographic text-center">
+                    <div class="text-6xl mb-4">🗣️</div>
+                    <h3 class="text-2xl font-bold text-white mb-4" data-i18n="feature3Title">Perfect Lip Sync</h3>
+                    <p class="text-white/70" data-i18n="feature3Desc">Multi-language lip sync support. English, Chinese, Japanese, Korean, Spanish, French, German - all with perfect mouth animation.</p>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="py-12">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-4" data-i18n="faqTitle">Common Questions</h2>
+                    <p class="text-slate-400"><span data-i18n="faqSubtitle">Have other questions? Contact us at</span> <a href="mailto:support@toonsync.space" class="text-cyan-400 hover:text-cyan-300 underline">support@toonsync.space</a></p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="neo-glass rounded-2xl p-8 hover:bg-white/5 transition-colors border border-white/5">
+                        <div class="text-xs font-bold text-cyan-500 mb-4 border border-cyan-500/30 inline-block px-2 py-1 rounded bg-cyan-950/30">01</div>
+                        <h3 class="text-lg font-bold text-white mb-3" data-i18n="faq1Q">What is ToonSync and how does it work?</h3>
+                        <p class="text-slate-400 leading-relaxed text-sm" data-i18n="faq1A">ToonSync is the world's first AI webtoon video maker that prioritizes storytelling. It uses advanced AI models to generate consistent characters, coherent story arcs, and perfect lip-sync animation from your text descriptions.</p>
+                    </div>
+                    <div class="neo-glass rounded-2xl p-8 hover:bg-white/5 transition-colors border border-white/5">
+                        <div class="text-xs font-bold text-cyan-500 mb-4 border border-cyan-500/30 inline-block px-2 py-1 rounded bg-cyan-950/30">02</div>
+                        <h3 class="text-lg font-bold text-white mb-3" data-i18n="faq2Q">Is ToonSync really free to use?</h3>
+                        <p class="text-slate-400 leading-relaxed text-sm" data-i18n="faq2A">Yes, ToonSync offers a generous free tier that allows you to create short webtoon videos with no credit card required. We believe in empowering creators to tell their stories without barriers.</p>
+                    </div>
+                    <div class="neo-glass rounded-2xl p-8 hover:bg-white/5 transition-colors border border-white/5">
+                        <div class="text-xs font-bold text-cyan-500 mb-4 border border-cyan-500/30 inline-block px-2 py-1 rounded bg-cyan-950/30">03</div>
+                        <h3 class="text-lg font-bold text-white mb-3" data-i18n="faq3Q">How do you maintain character consistency?</h3>
+                        <p class="text-slate-400 leading-relaxed text-sm" data-i18n="faq3A">We use proprietary 'Character Lock' technology. Once you define a character, our system maintains their facial features, clothing, and style across all generated scenes, regardless of camera angle or pose.</p>
+                    </div>
+                    <div class="neo-glass rounded-2xl p-8 hover:bg-white/5 transition-colors border border-white/5">
+                        <div class="text-xs font-bold text-cyan-500 mb-4 border border-cyan-500/30 inline-block px-2 py-1 rounded bg-cyan-950/30">04</div>
+                        <h3 class="text-lg font-bold text-white mb-3" data-i18n="faq4Q">What languages are supported for lip sync?</h3>
+                        <p class="text-slate-400 leading-relaxed text-sm" data-i18n="faq4A">We currently support perfect lip synchronization for English, Chinese (Mandarin), Japanese, Korean, Spanish, French, and German, with more languages coming soon.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison Section -->
+            <div class="neo-glass rounded-3xl p-8 mb-16 holographic">
+                <h2 class="text-4xl font-bold text-white text-center mb-8" data-i18n="whyDifferentTitle">Why We're Different</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-2xl font-bold text-red-400 mb-4" data-i18n="otherToolsTitle">❌ Other AI Video Tools</h3>
+                        <ul class="space-y-3 text-white/70">
+                            <li data-i18n="runway">• <strong>Runway</strong>: Great videos, no story coherence</li>
+                            <li data-i18n="civitai">• <strong>Civitai</strong>: Only static images, no video</li>
+                            <li data-i18n="did">• <strong>D-ID</strong>: Real humans only, no anime style</li>
+                            <li data-i18n="heyGen">• <strong>HeyGen</strong>: Business focus, no creativity</li>
+                            <li data-i18n="synthesia">• <strong>Synthesia</strong>: Templates only, no customization</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-green-400 mb-4" data-i18n="ourToolTitle">✅ AI Webtoon Maker</h3>
+                        <ul class="space-y-3 text-white/70">
+                            <li data-i18n="storyCoherence">• <strong>Story Coherence</strong>: Complete narrative arcs</li>
+                            <li data-i18n="characterConsistency">• <strong>Character Consistency</strong>: Same character, every scene</li>
+                            <li data-i18n="multiLangLipSync">• <strong>Multi-language Lip Sync</strong>: 7+ languages supported</li>
+                            <li data-i18n="creatorFocused">• <strong>Creator Focused</strong>: Built for storytellers</li>
+                            <li data-i18n="animeStyle">• <strong>Anime/Manga Style</strong>: Perfect for webtoons</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Language Support -->
+            <div class="neo-glass rounded-3xl p-8 mb-16 holographic">
+                <h2 class="text-4xl font-bold text-white text-center mb-8" data-i18n="languageSupportTitle">🌍 Global Language Support</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div class="text-center">
+                        <div class="text-4xl mb-2">🇺🇸</div>
+                        <h4 class="text-lg font-bold text-white" data-i18n="englishLabel">English</h4>
+                        <p class="text-cyan-400 text-sm" data-i18n="englishDesc">ElevenLabs Premium</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl mb-2">🇨🇳</div>
+                        <h4 class="text-lg font-bold text-white" data-i18n="chineseLabel">Chinese</h4>
+                        <p class="text-cyan-400 text-sm" data-i18n="chineseDesc">Azure Optimized</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl mb-2">🇯🇵</div>
+                        <h4 class="text-lg font-bold text-white" data-i18n="japaneseLabel">Japanese</h4>
+                        <p class="text-cyan-400 text-sm" data-i18n="japaneseDesc">Anime Style</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl mb-2">🇰🇷</div>
+                        <h4 class="text-lg font-bold text-white" data-i18n="koreanLabel">Korean</h4>
+                        <p class="text-cyan-400 text-sm" data-i18n="koreanDesc">K-pop Style</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl mb-2">🇪🇸</div>
+                        <h4 class="text-lg font-bold text-white" data-i18n="spanishLabel">Spanish</h4>
+                        <p class="text-cyan-400 text-sm" data-i18n="spanishDesc">ElevenLabs</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl mb-2">🇫🇷</div>
+                        <h4 class="text-lg font-bold text-white" data-i18n="frenchLabel">French</h4>
+                        <p class="text-cyan-400 text-sm" data-i18n="frenchDesc">ElevenLabs</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl mb-2">🇩🇪</div>
+                        <h4 class="text-lg font-bold text-white" data-i18n="germanLabel">German</h4>
+                        <p class="text-cyan-400 text-sm" data-i18n="germanDesc">ElevenLabs</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl mb-2">🌍</div>
+                        <h4 class="text-lg font-bold text-white" data-i18n="moreLabel">More</h4>
+                        <p class="text-cyan-400 text-sm" data-i18n="moreDesc">Coming Soon</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pricing Section -->
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-white mb-8" data-i18n="pricingTitle">💰 Simple Pricing</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="neo-glass rounded-3xl p-8 quantum-card">
+                        <h3 class="text-2xl font-bold text-white mb-4" data-i18n="freeTitle">Free</h3>
+                        <div class="text-4xl font-bold text-cyan-400 mb-4"><span data-i18n="freePrice">$0</span></div>
+                        <ul class="space-y-2 text-white/70 mb-6">
+                            <li data-i18n="freeFeature1">• 3 projects</li>
+                            <li data-i18n="freeFeature2">• 5-minute videos</li>
+                            <li data-i18n="freeFeature3">• Basic characters</li>
+                            <li data-i18n="freeFeature4">• English TTS</li>
+                        </ul>
+                        <a href="http://localhost:3000/register" class="block bg-gradient-to-r from-gray-500 to-gray-600 text-white py-3 rounded-xl font-semibold" data-i18n="freeButton">
+                            Get Started
+                        </a>
+                    </div>
+                    
+                    <div class="neo-glass rounded-3xl p-8 quantum-card border-2 border-purple-500">
+                        <div class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-1 rounded-full text-sm font-bold mb-4" data-i18n="proPopular">
+                            POPULAR
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-4" data-i18n="proTitle">Pro</h3>
+                        <div class="text-4xl font-bold text-purple-400 mb-4"><span data-i18n="proPrice">$29</span><span class="text-lg" data-i18n="proMonth">/mo</span></div>
+                        <ul class="space-y-2 text-white/70 mb-6">
+                            <li data-i18n="proFeature1">• Unlimited projects</li>
+                            <li data-i18n="proFeature2">• 30-minute videos</li>
+                            <li data-i18n="proFeature3">• Advanced characters</li>
+                            <li data-i18n="proFeature4">• Multi-language TTS</li>
+                            <li data-i18n="proFeature5">• Character consistency AI</li>
+                        </ul>
+                        <a href="http://localhost:3000/register" class="block bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 rounded-xl font-semibold" data-i18n="proButton">
+                            Start Pro Trial
+                        </a>
+                    </div>
+                    
+                    <div class="neo-glass rounded-3xl p-8 quantum-card">
+                        <h3 class="text-2xl font-bold text-white mb-4" data-i18n="enterpriseTitle">Enterprise</h3>
+                        <div class="text-4xl font-bold text-yellow-400 mb-4"><span data-i18n="enterprisePrice">$99</span><span class="text-lg" data-i18n="proMonth">/mo</span></div>
+                        <ul class="space-y-2 text-white/70 mb-6">
+                            <li data-i18n="enterpriseFeature1">• Team collaboration</li>
+                            <li data-i18n="enterpriseFeature2">• API access</li>
+                            <li data-i18n="enterpriseFeature3">• Custom character training</li>
+                            <li data-i18n="enterpriseFeature4">• Priority support</li>
+                            <li data-i18n="enterpriseFeature5">• White-label options</li>
+                        </ul>
+                        <a href="mailto:enterprise@aiwebtoonmaker.com" class="block bg-gradient-to-r from-yellow-500 to-orange-500 text-white py-3 rounded-xl font-semibold" data-i18n="enterpriseButton">
+                            Contact Sales
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="text-center neo-glass rounded-3xl p-12 holographic">
+                <h2 class="text-5xl font-bold text-white mb-6" data-i18n="ctaTitle">Ready to Create Amazing Webtoon Videos?</h2>
+                <p class="text-xl text-white/80 mb-8" data-i18n="ctaSubtitle">Join thousands of creators who are already using AI Webtoon Maker</p>
+                <div class="flex justify-center space-x-4">
+                    <a href="http://localhost:3000/register" class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-12 py-4 rounded-2xl font-bold text-xl hover:shadow-lg transition-all transform hover:scale-105" data-i18n="startNow">
+                        🚀 Start Creating Now
+                    </a>
+                    <a href="mailto:hello@aiwebtoonmaker.com" class="neo-glass text-cyan-400 px-12 py-4 rounded-2xl font-bold text-xl hover:bg-white/10 transition-all" data-i18n="contactUs">
+                        📧 Contact Us
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="neo-glass border-t border-white/20 mt-16">
+        <div class="max-w-7xl mx-auto px-6 py-8">
+            <div class="text-center">
+                <p class="text-white/60">
+                    <span data-i18n="footerText">Made with ❤️ for global creators</span> | 
+                    <a href="mailto:support@aiwebtoonmaker.com" class="text-cyan-400 hover:text-cyan-300" data-i18n="support">Support</a> | 
+                    <a href="#" class="text-cyan-400 hover:text-cyan-300" data-i18n="privacy">Privacy</a> | 
+                    <a href="#" class="text-cyan-400 hover:text-cyan-300" data-i18n="terms">Terms</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="i18n-translations.js"></script>
+    <script>
+        // 检查翻译文件是否加载
+        console.log('=== 翻译文件加载检查 ===');
+        console.log('fullTranslations 是否定义:', typeof fullTranslations !== 'undefined');
+        if (typeof fullTranslations !== 'undefined') {
+            console.log('支持的语言:', Object.keys(fullTranslations));
+            console.log('日文翻译是否存在:', fullTranslations.ja ? '是' : '否');
+            if (fullTranslations.ja) {
+                console.log('日文翻译键数量:', Object.keys(fullTranslations.ja).length);
+            }
+        } else {
+            console.error('❌ fullTranslations 未定义！翻译文件可能没有加载');
+        }
+        
+        let currentLang = 'en';
+
+        // 语言切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const languageSelector = document.getElementById('languageSelector');
+            const languageDropdown = document.getElementById('languageDropdown');
+            const languageOptions = document.querySelectorAll('.language-option');
+
+            // 切换下拉菜单
+            languageSelector.addEventListener('click', function(e) {
+                e.stopPropagation();
+                
+                // 计算下拉菜单的位置
+                const rect = languageSelector.getBoundingClientRect();
+                languageDropdown.style.top = (rect.bottom + 8) + 'px';
+                // 调整右侧对齐，确保不溢出屏幕
+                const rightPos = window.innerWidth - rect.right;
+                languageDropdown.style.right = Math.max(16, rightPos) + 'px'; // 保持至少16px的边距
+                
+                languageDropdown.classList.toggle('hidden');
+                languageDropdown.classList.toggle('flex'); // 切换 flex 显示
+            });
+
+            // 点击其他地方关闭下拉菜单
+            document.addEventListener('click', function() {
+                languageDropdown.classList.add('hidden');
+                languageDropdown.classList.remove('flex');
+            });
+
+            // 语言选择
+            languageOptions.forEach(option => {
+                option.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const lang = this.getAttribute('data-lang');
+                    console.log('切换语言到:', lang); // 调试信息
+                    switchLanguage(lang);
+                    languageDropdown.classList.add('hidden');
+                    languageDropdown.classList.remove('flex');
+                });
+            });
+            
+            console.log('已绑定', languageOptions.length, '个语言选项'); // 调试信息
+
+            // 鼠标跟踪效果
+            document.addEventListener('mousemove', function(e) {
+                const cursor = document.createElement('div');
+                cursor.className = 'fixed w-1 h-1 bg-cyan-400 rounded-full pointer-events-none z-50';
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+                cursor.style.animation = 'cursor-trail 0.5s ease-out forwards';
+                document.body.appendChild(cursor);
+                
+                setTimeout(() => cursor.remove(), 500);
+            });
+            
+            // 添加鼠标轨迹动画
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes cursor-trail {
+                    0% { opacity: 1; transform: scale(1); }
+                    100% { opacity: 0; transform: scale(0); }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+
+        function switchLanguage(lang) {
+            console.log('=== 开始切换语言 ===');
+            console.log('目标语言:', lang);
+            console.log('fullTranslations 是否存在:', typeof fullTranslations !== 'undefined');
+            console.log('fullTranslations[lang] 是否存在:', fullTranslations && fullTranslations[lang] ? '是' : '否');
+            
+            currentLang = lang;
+            
+            // 检查翻译是否存在
+            if (!fullTranslations || !fullTranslations[lang]) {
+                console.error('❌ Translation not found for language:', lang);
+                console.error('fullTranslations:', fullTranslations);
+                return;
+            }
+            
+            console.log('✅ 翻译文件加载成功');
+            
+            const t = fullTranslations[lang];
+            const fallback = fullTranslations['en']; // 英文作为后备
+            
+            console.log('当前语言翻译键数量:', Object.keys(t).length);
+            console.log('示例翻译 - navTitle:', t.navTitle);
+            
+            // 更新页面标题
+            document.title = (t.navTitle || fallback.navTitle) + ' - ' + (t.navSubtitle || fallback.navSubtitle);
+            
+            // 更新当前语言显示
+            const flagMap = {
+                'en': '🇺🇸 EN',
+                'zh': '🇨🇳 中文',
+                'ja': '🇯🇵 日本語',
+                'ko': '🇰🇷 한국어',
+                'es': '�🇸 ES',
+                'fr': '🇫🇷 FR',
+                'de': '🇩🇪 DE'
+            };
+            document.getElementById('currentLanguage').textContent = flagMap[lang];
+            
+            // 更新所有带有 data-i18n 属性的元素
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                // 使用当前语言的翻译，如果不存在则使用英文后备
+                const translation = t[key] || fallback[key];
+                if (translation) {
+                    // 保留 HTML 标签（如 <strong>）
+                    if (element.innerHTML.includes('<strong>')) {
+                        // 对于包含 HTML 的元素，保留结构
+                        element.innerHTML = translation;
+                    } else {
+                        element.textContent = translation;
+                    }
+                }
+            });
+            
+            // 显示语言切换成功的提示
+            showLanguageChangeNotification(flagMap[lang]);
+        }
+
+        function showLanguageChangeNotification(langName) {
+            // 创建通知元素
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 neo-glass text-cyan-400 px-6 py-3 rounded-2xl z-50 transform translate-x-full transition-transform duration-300';
+            notification.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-check-circle text-green-400"></i>
+                    <span>Language switched to ${langName}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // 显示动画
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            // 3秒后隐藏
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

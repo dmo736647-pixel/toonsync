@@ -1,0 +1,54 @@
+# Cloudflare Pages 配置
+# 用于前端部署
+
+name = "toonsync-frontend"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = "dist"
+
+[build]
+command = "npm run build"
+cwd = "frontend"
+
+[build.environment]
+NODE_VERSION = "18"
+
+[[routes]]
+pattern = "toonsync.space/*"
+zone_name = "toonsync.space"
+
+[[routes]]
+pattern = "www.toonsync.space/*"
+zone_name = "toonsync.space"
+
+[[headers]]
+for = "/*"
+[headers.values]
+X-Frame-Options = "DENY"
+X-Content-Type-Options = "nosniff"
+X-XSS-Protection = "1; mode=block"
+Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+for = "/assets/*"
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "/*.js"
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "/*.css"
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"
+
+[[redirects]]
+from = "/api/*"
+to = "https://api.toonsync.space/api/:splat"
+status = 200
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200

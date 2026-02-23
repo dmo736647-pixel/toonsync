@@ -1,0 +1,53 @@
+# Core dependencies
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+pydantic==2.5.0
+pydantic-settings==2.1.0
+
+# Database
+sqlalchemy==2.0.25
+alembic==1.13.1
+psycopg2-binary==2.9.9
+redis==5.0.1
+
+# Storage
+boto3==1.34.0
+
+# Authentication
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.6
+
+# HTTP client
+httpx==0.26.0
+
+# Development dependencies
+pytest==7.4.4
+pytest-asyncio==0.23.3
+pytest-cov==4.1.0
+hypothesis==6.96.0
+black==23.12.1
+ruff==0.1.11
+mypy==1.8.0
+
+# Audio processing and AI models
+librosa==0.10.1
+soundfile==0.12.1
+openai-whisper==20231117
+numpy==1.24.3
+pypinyin==0.51.0
+
+# Image processing
+Pillow==10.1.0
+
+# AI Model APIs (for cloud deployment)
+replicate==0.22.0
+
+# ElevenLabs TTS (for global multi-language support)
+elevenlabs==0.2.26
+
+# Azure TTS (for Chinese, Japanese, Korean)
+azure-cognitiveservices-speech==1.38.0
+
+# Supabase client (for cloud storage)
+supabase==2.3.0

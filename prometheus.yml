@@ -1,0 +1,41 @@
+# Prometheus配置文件
+global:
+  scrape_interval: 15s  # 每15秒抓取一次指标
+  evaluation_interval: 15s  # 每15秒评估一次告警规则
+  external_labels:
+    monitor: 'short-drama-monitor'
+
+# 告警管理器配置（可选）
+# alerting:
+#   alertmanagers:
+#     - static_configs:
+#         - targets:
+#           - alertmanager:9093
+
+# 告警规则文件
+rule_files:
+  - "alert_rules.yml"
+
+# 抓取配置
+scrape_configs:
+  # 抓取Prometheus自身的指标
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # 抓取短剧应用的指标
+  - job_name: 'short-drama-app'
+    metrics_path: '/api/v1/monitoring/metrics/prometheus'
+    static_configs:
+      - targets: ['app:8000']
+    scrape_interval: 10s  # 应用指标更频繁地抓取
+
+  # 抓取PostgreSQL指标（需要postgres_exporter）
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+
+  # 抓取Redis指标（需要redis_exporter）
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']
