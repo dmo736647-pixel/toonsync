@@ -18,8 +18,8 @@ python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
 python-multipart==0.0.6
 
-# HTTP client
-httpx==0.26.0
+# HTTP client (compatible with supabase and replicate)
+httpx>=0.24.0,<0.25.0
 
 # Development dependencies
 pytest==7.4.4
