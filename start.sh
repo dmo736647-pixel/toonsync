@@ -1,7 +1,11 @@
 #!/bin/bash
 
-# Run database migrations (ignore errors if tables already exist)
-alembic upgrade head 2>/dev/null || echo "Migration completed with warnings"
+echo "Starting deployment..."
 
+# Run database migrations (ignore all errors)
+echo "Running database migrations..."
+alembic upgrade head || true
+
+echo "Starting application..."
 # Start the application
 exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}

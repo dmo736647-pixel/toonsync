@@ -14,7 +14,8 @@ RUN pip install --upgrade pip setuptools wheel
 
 COPY requirements.txt .
 
-ARG CACHEBUST=1
+# Force cache bust
+ARG CACHEBUST=2
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
