@@ -15,7 +15,7 @@ RUN pip install --upgrade pip setuptools wheel
 COPY requirements.txt .
 
 # Force cache bust
-ARG CACHEBUST=2
+ARG CACHEBUST=3
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
@@ -25,4 +25,5 @@ RUN chmod +x start.sh
 
 EXPOSE 8000
 
-CMD ["./start.sh"]
+# Skip migrations, start app directly
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
