@@ -1,7 +1,7 @@
 """Add PayPal fields to subscription
 
 Revision ID: add_paypal_fields
-Revises: 
+Revises: 003
 Create Date: 2026-02-22
 
 """
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 revision = 'add_paypal_fields'
-down_revision = None
+down_revision = '003'
 branch_labels = None
 depends_on = None
 
