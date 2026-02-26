@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase.ts';
 import type { Character } from '../types';
 
 export interface CreateCharacterRequest {
