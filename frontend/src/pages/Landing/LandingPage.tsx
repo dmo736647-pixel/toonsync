@@ -343,7 +343,7 @@ export function LandingPage() {
                     </svg>
                   </button>
                   {showLangDropdown && (
-                    <div className="absolute right-0 mt-2 neo-glass rounded-2xl p-2 w-48 flex flex-col gap-1 border border-white/20 shadow-2xl backdrop-blur-xl bg-black/80 z-50">
+                    <div className="fixed neo-glass rounded-2xl p-2 w-48 flex flex-col gap-1 border border-white/20 shadow-2xl backdrop-blur-xl bg-black/90" style={{ zIndex: 9999, top: '80px', right: '120px' }}>
                       {Object.entries(languageFlags).map(([lang, { flag, name }]) => (
                         <button
                           key={lang}
