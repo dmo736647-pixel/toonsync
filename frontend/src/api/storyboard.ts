@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabase } from '../lib/supabase';
 import apiClient from './client';
 import type { Storyboard } from '../types';
 
