@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, Typography, Button, Box, Divider, Radio, RadioGroup, FormControlLabel, Alert, LoadingButton } from '@mui/material';
-import { CheckCircle, CreditCard, PayPal } from '@heroicons/react/24/outline';
+import { CheckIcon, CreditCardIcon } from '@heroicons/react/24/outline';
 
 interface PricingPlan {
   name: string;
@@ -58,7 +57,6 @@ export const PaymentPage: React.FC = () => {
     setError(null);
     
     try {
-      // 调用PayPal支付API
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/paypal/create-order`, {
         method: 'POST',
         headers: {
@@ -80,7 +78,6 @@ export const PaymentPage: React.FC = () => {
       const data = await response.json();
       
       if (data.approval_url) {
-        // 跳转到PayPal支付页面
         window.location.href = data.approval_url;
       } else {
         throw new Error('支付链接生成失败');
@@ -106,121 +103,108 @@ export const PaymentPage: React.FC = () => {
         </div>
 
         {error && (
-          <Alert severity="error" className="max-w-3xl mx-auto mb-8">
+          <div className="max-w-3xl mx-auto mb-8 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
             {error}
-          </Alert>
+          </div>
         )}
 
         {success && (
-          <Alert severity="success" className="max-w-3xl mx-auto mb-8">
+          <div className="max-w-3xl mx-auto mb-8 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700">
             支付成功！正在为您激活订阅...
-          </Alert>
+          </div>
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {plans.map((plan) => (
-            <Card 
+            <div 
               key={plan.name}
-              className={`relative ${plan.recommended ? 'border-2 border-blue-500 shadow-lg' : 'border border-gray-200'}`}
+              className={`relative bg-white rounded-lg p-6 ${plan.recommended ? 'border-2 border-blue-500 shadow-lg' : 'border border-gray-200'}`}
             >
               {plan.recommended && (
                 <div className="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold py-1 px-3 rounded-bl-lg">
                   推荐
                 </div>
               )}
-              <CardContent className="p-6">
-                <Typography variant="h5" component="h2" className="font-bold mb-2">
-                  {plan.name}
-                </Typography>
-                <Typography variant="h3" component="div" className="font-bold text-gray-900 mb-4">
-                  ¥{plan.price}<span className="text-sm font-normal text-gray-500">/月</span>
-                </Typography>
-                <Divider className="my-4" />
-                <ul className="space-y-3 mb-6">
-                  {plan.features.map((feature, index) => (
-                    <li key={index} className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-600">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                <RadioGroup
-                  row
-                  value={selectedPlan === plan.name ? plan.name : ''}
-                  onChange={() => setSelectedPlan(plan.name)}
-                  className="mb-4"
-                >
-                  <FormControlLabel
-                    value={plan.name}
-                    control={<Radio />}
-                    label="选择"
-                  />
-                </RadioGroup>
-              </CardContent>
-            </Card>
+              <h2 className="text-xl font-bold mb-2">{plan.name}</h2>
+              <div className="text-3xl font-bold text-gray-900 mb-4">
+                ¥{plan.price}<span className="text-sm font-normal text-gray-500">/月</span>
+              </div>
+              <hr className="my-4" />
+              <ul className="space-y-3 mb-6">
+                {plan.features.map((feature, index) => (
+                  <li key={index} className="flex items-start">
+                    <CheckIcon className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-600">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+              <button
+                onClick={() => setSelectedPlan(plan.name)}
+                className={`w-full py-2 px-4 rounded-lg border ${
+                  selectedPlan === plan.name 
+                    ? 'bg-blue-600 text-white border-blue-600' 
+                    : 'bg-white text-gray-700 border-gray-300 hover:border-blue-500'
+                }`}
+              >
+                {selectedPlan === plan.name ? '已选择' : '选择'}
+              </button>
+            </div>
           ))}
         </div>
 
         <div className="max-w-3xl mx-auto mt-12">
-          <Card className="p-6">
-            <CardContent>
-              <Typography variant="h6" component="h3" className="mb-4">
-                支付方式
-              </Typography>
-              <RadioGroup
-                row
-                value={paymentMethod}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-                className="mb-6"
+          <div className="bg-white rounded-lg p-6 border border-gray-200">
+            <h3 className="text-lg font-semibold mb-4">支付方式</h3>
+            <div className="flex gap-4 mb-6">
+              <button
+                onClick={() => setPaymentMethod('paypal')}
+                className={`flex items-center px-4 py-2 rounded-lg border ${
+                  paymentMethod === 'paypal' 
+                    ? 'bg-blue-50 border-blue-500' 
+                    : 'bg-white border-gray-300'
+                }`}
               >
-                <FormControlLabel
-                  value="paypal"
-                  control={<Radio />}
-                  label={
-                    <div className="flex items-center">
-                      <PayPal className="h-5 w-5 text-blue-600 mr-2" />
-                      <span>PayPal</span>
-                    </div>
-                  }
-                />
-                <FormControlLabel
-                  value="credit-card"
-                  control={<Radio />}
-                  label={
-                    <div className="flex items-center">
-                      <CreditCard className="h-5 w-5 text-blue-600 mr-2" />
-                      <span>信用卡</span>
-                    </div>
-                  }
-                />
-              </RadioGroup>
+                <span className="text-blue-600 font-semibold">PayPal</span>
+              </button>
+              <button
+                onClick={() => setPaymentMethod('credit-card')}
+                className={`flex items-center px-4 py-2 rounded-lg border ${
+                  paymentMethod === 'credit-card' 
+                    ? 'bg-blue-50 border-blue-500' 
+                    : 'bg-white border-gray-300'
+                }`}
+              >
+                <CreditCardIcon className="h-5 w-5 text-blue-600 mr-2" />
+                <span>信用卡</span>
+              </button>
+            </div>
 
-              {paymentMethod === 'credit-card' && (
-                <Alert severity="info" className="mb-4">
-                  信用卡支付功能即将上线，敬请期待！
-                </Alert>
-              )}
+            {paymentMethod === 'credit-card' && (
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg mb-4 text-blue-700">
+                信用卡支付功能即将上线，敬请期待！
+              </div>
+            )}
 
-              <Box className="flex justify-between items-center mt-8">
-                <Button 
-                  variant="outlined" 
-                  onClick={handleBack}
-                  className="px-6"
-                >
-                  返回
-                </Button>
-                <LoadingButton
-                  variant="contained"
-                  onClick={handlePayment}
-                  loading={isLoading}
-                  disabled={paymentMethod !== 'paypal' || selectedPlan === '免费版'}
-                  className="bg-blue-600 hover:bg-blue-700 px-8"
-                >
-                  {selectedPlan === '免费版' ? '当前方案' : '立即支付'}
-                </LoadingButton>
-              </Box>
-            </CardContent>
-          </Card>
+            <div className="flex justify-between items-center mt-8">
+              <button 
+                onClick={handleBack}
+                className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+              >
+                返回
+              </button>
+              <button
+                onClick={handlePayment}
+                disabled={isLoading || paymentMethod !== 'paypal' || selectedPlan === '免费版'}
+                className={`px-8 py-2 rounded-lg ${
+                  isLoading || paymentMethod !== 'paypal' || selectedPlan === '免费版'
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                }`}
+              >
+                {isLoading ? '处理中...' : selectedPlan === '免费版' ? '当前方案' : '立即支付'}
+              </button>
+            </div>
+          </div>
         </div>
 
         <div className="text-center mt-8 text-sm text-gray-500">

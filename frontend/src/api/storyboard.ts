@@ -149,7 +149,7 @@ export const storyboardApi = {
     }
   },
 
-  async reorderStoryboards(projectId: string, frameOrders: { id: string; frame_number: number }[]): Promise<void> {
+  async reorderStoryboards(_projectId: string, frameOrders: { id: string; frame_number: number }[]): Promise<void> {
     // Supabase doesn't support bulk update easily in client, so we loop (not ideal for large lists but fine for MVP)
     // Or we could use an RPC function if we created one.
     
