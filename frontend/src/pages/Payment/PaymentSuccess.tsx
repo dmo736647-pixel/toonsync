@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Card, CardContent, Typography, Button, Box, Alert, CircularProgress } from '@mui/material';
-import { CheckCircle, Clock, XCircle } from '@heroicons/react/24/outline';
+import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
 
-export const PaymentSuccess: React.FC = () => {
+export const PaymentSuccess = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
@@ -12,8 +11,6 @@ export const PaymentSuccess: React.FC = () => {
   useEffect(() => {
     const processPayment = async () => {
       const orderId = searchParams.get('orderID');
-      const token = searchParams.get('token');
-      const payerId = searchParams.get('PayerID');
 
       if (!orderId) {
         setStatus('error');
@@ -22,7 +19,6 @@ export const PaymentSuccess: React.FC = () => {
       }
 
       try {
-        // 调用后端API完成支付
         const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/paypal/capture-order`, {
           method: 'POST',
           headers: {
@@ -51,7 +47,7 @@ export const PaymentSuccess: React.FC = () => {
     };
 
     processPayment();
-  }, [searchParams, navigate]);
+  }, [searchParams]);
 
   const handleBackToDashboard = () => {
     navigate('/projects');
@@ -60,63 +56,49 @@ export const PaymentSuccess: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md mx-auto">
-        <Card className="p-8">
-          <CardContent className="text-center">
+        <div className="bg-white rounded-lg p-8 shadow-md">
+          <div className="text-center">
             {status === 'loading' ? (
               <>
-                <CircularProgress className="mx-auto mb-4" />
-                <Typography variant="h5" component="h2" className="mb-2">
-                  处理中
-                </Typography>
-                <Typography variant="body1" className="text-gray-600">
-                  {message}
-                </Typography>
+                <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <h2 className="text-xl font-semibold mb-2">处理中</h2>
+                <p className="text-gray-600">{message}</p>
               </>
             ) : status === 'success' ? (
               <>
-                <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-                <Typography variant="h5" component="h2" className="mb-2 text-green-600 font-bold">
-                  支付成功！
-                </Typography>
-                <Typography variant="body1" className="text-gray-600 mb-6">
-                  {message}
-                </Typography>
-                <Button
-                  variant="contained"
+                <CheckCircleIcon className="h-16 w-16 text-green-500 mx-auto mb-4" />
+                <h2 className="text-xl font-semibold mb-2 text-green-600">支付成功！</h2>
+                <p className="text-gray-600 mb-6">{message}</p>
+                <button
                   onClick={handleBackToDashboard}
-                  className="bg-blue-600 hover:bg-blue-700 px-8"
+                  className="bg-blue-600 text-white px-8 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   返回仪表盘
-                </Button>
+                </button>
               </>
             ) : (
               <>
-                <XCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
-                <Typography variant="h5" component="h2" className="mb-2 text-red-600 font-bold">
-                  支付失败
-                </Typography>
-                <Typography variant="body1" className="text-gray-600 mb-6">
-                  {message}
-                </Typography>
-                <Box className="flex justify-center space-x-4">
-                  <Button
-                    variant="outlined"
+                <XCircleIcon className="h-16 w-16 text-red-500 mx-auto mb-4" />
+                <h2 className="text-xl font-semibold mb-2 text-red-600">支付失败</h2>
+                <p className="text-gray-600 mb-6">{message}</p>
+                <div className="flex justify-center gap-4">
+                  <button
                     onClick={() => window.history.back()}
+                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
                   >
                     返回重试
-                  </Button>
-                  <Button
-                    variant="contained"
+                  </button>
+                  <button
                     onClick={handleBackToDashboard}
-                    className="bg-blue-600 hover:bg-blue-700"
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
                   >
                     返回首页
-                  </Button>
-                </Box>
+                  </button>
+                </div>
               </>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         <div className="mt-8 text-center text-sm text-gray-500">
           <p>如有问题，请联系客服：support@toonsync.space</p>
