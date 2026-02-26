@@ -1,0 +1,13 @@
+*.py
+*.pyc
+__pycache__
+venv
+.venv
+requirements.txt
+app/
+alembic/
+*.toml
+Dockerfile
+Procfile
+.env*
+!.env.production
