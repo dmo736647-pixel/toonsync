@@ -262,6 +262,21 @@ export function LandingPage() {
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const cursor = document.createElement('div');
+      cursor.className = 'cursor-trail';
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+      document.body.appendChild(cursor);
+      
+      setTimeout(() => cursor.remove(), 500);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    return () => document.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   return (
     <div className="landing-page min-h-screen relative">
       {/* Neural Network Background */}
