@@ -10,7 +10,8 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+# Only ignore lib at root level, not in frontend/src
+/lib/
 lib64/
 parts/
 sdist/
