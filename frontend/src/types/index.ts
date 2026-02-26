@@ -75,12 +75,15 @@ export interface Storyboard {
 }
 
 export interface Workflow {
+  id: string;
   workflow_id: string;
   user_id: string;
+  project_id?: string;
   created_at: string;
   updated_at: string;
   status: string;
   current_step: string;
+  progress: number;
   config: any;
   error_message?: string | null;
 }
