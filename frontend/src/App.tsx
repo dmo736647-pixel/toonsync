@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { Login } from './pages/Auth/Login';
 import { Register } from './pages/Auth/Register';
-import { Home } from './pages/Home/Home'; // Import Home page
+import { LandingPage } from './pages/Landing/LandingPage';
 import { ProjectList } from './pages/Projects/ProjectList';
 import { NewProject } from './pages/Projects/NewProject';
 import { ProjectDetail } from './pages/Projects/ProjectDetail';
@@ -27,10 +27,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           
-          {/* Public Home Page wrapped in Layout (for consistent nav) */}
-          <Route element={<Layout />}>
-             <Route path="/" element={<Home />} />
-          </Route>
+          {/* Public Landing Page */}
+          <Route path="/" element={<LandingPage />} />
 
           {/* Protected Routes */}
           <Route
