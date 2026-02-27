@@ -249,6 +249,8 @@ const languageFlags: Record<string, { flag: string; name: string }> = {
 export function LandingPage() {
   const [currentLang, setCurrentLang] = useState('en');
   const [showLangDropdown, setShowLangDropdown] = useState(false);
+  const langButtonRef = React.useRef<HTMLButtonElement>(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, right: 0 });
   const t = translations[currentLang] || translations.en;
 
   const handleLanguageChange = (lang: string) => {
@@ -276,6 +278,16 @@ export function LandingPage() {
     document.addEventListener('mousemove', handleMouseMove);
     return () => document.removeEventListener('mousemove', handleMouseMove);
   }, []);
+
+  useEffect(() => {
+    if (showLangDropdown && langButtonRef.current) {
+      const rect = langButtonRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + 8,
+        right: window.innerWidth - rect.right
+      });
+    }
+  }, [showLangDropdown]);
 
   return (
     <div className="landing-page min-h-screen relative">
@@ -331,6 +343,7 @@ export function LandingPage() {
                 {/* Language Selector */}
                 <div className="relative" onClick={(e) => e.stopPropagation()}>
                   <button
+                    ref={langButtonRef}
                     onClick={() => setShowLangDropdown(!showLangDropdown)}
                     className="flex items-center space-x-3 neo-glass px-4 py-2 rounded-full hover:bg-white/10 transition-all"
                   >
@@ -343,12 +356,19 @@ export function LandingPage() {
                     </svg>
                   </button>
                   {showLangDropdown && (
-                    <div className="fixed neo-glass rounded-2xl p-2 w-48 flex flex-col gap-1 border border-white/20 shadow-2xl backdrop-blur-xl bg-black/90" style={{ zIndex: 9999, top: '80px', right: '120px' }}>
+                    <div 
+                      className="fixed neo-glass rounded-2xl p-2 w-48 flex flex-col gap-1 border border-white/20 shadow-2xl backdrop-blur-xl bg-black/90" 
+                      style={{ 
+                        zIndex: 99999, 
+                        top: dropdownPosition.top, 
+                        right: dropdownPosition.right 
+                      }}
+                    >
                       {Object.entries(languageFlags).map(([lang, { flag, name }]) => (
                         <button
                           key={lang}
                           onClick={() => handleLanguageChange(lang)}
-                          className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 transition-all text-white text-sm flex items-center space-x-2"
+                          className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 transition-all text-white text-sm flex items-center space-x-2 cursor-pointer"
                         >
                           <span className="text-lg">{flag}</span>
                           <span>{name}</span>
