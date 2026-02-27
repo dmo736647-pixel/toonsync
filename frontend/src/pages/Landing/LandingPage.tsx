@@ -259,7 +259,12 @@ export function LandingPage() {
   };
 
   useEffect(() => {
-    const handleClickOutside = () => setShowLangDropdown(false);
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('.lang-dropdown-container')) {
+        setShowLangDropdown(false);
+      }
+    };
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
@@ -341,7 +346,7 @@ export function LandingPage() {
 
               <div className="flex items-center space-x-6">
                 {/* Language Selector */}
-                <div className="relative" onClick={(e) => e.stopPropagation()}>
+                <div className="relative lang-dropdown-container" onClick={(e) => e.stopPropagation()}>
                   <button
                     ref={langButtonRef}
                     onClick={() => setShowLangDropdown(!showLangDropdown)}
@@ -363,11 +368,15 @@ export function LandingPage() {
                         top: dropdownPosition.top, 
                         right: dropdownPosition.right 
                       }}
+                      onClick={(e) => e.stopPropagation()}
                     >
                       {Object.entries(languageFlags).map(([lang, { flag, name }]) => (
                         <button
                           key={lang}
-                          onClick={() => handleLanguageChange(lang)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleLanguageChange(lang);
+                          }}
                           className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 transition-all text-white text-sm flex items-center space-x-2 cursor-pointer"
                         >
                           <span className="text-lg">{flag}</span>
