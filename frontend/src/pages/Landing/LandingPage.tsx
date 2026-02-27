@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 
 const translations: Record<string, Record<string, string>> = {
   en: {
@@ -249,8 +250,8 @@ const languageFlags: Record<string, { flag: string; name: string }> = {
 export function LandingPage() {
   const [currentLang, setCurrentLang] = useState('en');
   const [showLangDropdown, setShowLangDropdown] = useState(false);
-  const langButtonRef = React.useRef<HTMLButtonElement>(null);
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, right: 0 });
+  const langButtonRef = useRef<HTMLButtonElement>(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const t = translations[currentLang] || translations.en;
 
   const handleLanguageChange = (lang: string) => {
@@ -289,7 +290,7 @@ export function LandingPage() {
       const rect = langButtonRef.current.getBoundingClientRect();
       setDropdownPosition({
         top: rect.bottom + 8,
-        right: window.innerWidth - rect.right
+        left: rect.left
       });
     }
   }, [showLangDropdown]);
@@ -360,13 +361,15 @@ export function LandingPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </button>
-                  {showLangDropdown && (
+                  {showLangDropdown && createPortal(
                     <div 
-                      className="fixed neo-glass rounded-2xl p-2 w-48 flex flex-col gap-1 border border-white/20 shadow-2xl backdrop-blur-xl bg-black/90" 
+                      className="fixed neo-glass rounded-2xl p-2 w-48 flex flex-col gap-1 border border-white/20 shadow-2xl backdrop-blur-xl bg-black/90"
                       style={{ 
-                        zIndex: 99999, 
+                        zIndex: 2147483647,
                         top: dropdownPosition.top, 
-                        right: dropdownPosition.right 
+                        left: dropdownPosition.left,
+                        maxHeight: '300px',
+                        overflowY: 'auto'
                       }}
                       onClick={(e) => e.stopPropagation()}
                     >
@@ -383,7 +386,8 @@ export function LandingPage() {
                           <span>{name}</span>
                         </button>
                       ))}
-                    </div>
+                    </div>,
+                    document.body
                   )}
                 </div>
 
