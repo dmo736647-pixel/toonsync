@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { Login } from './pages/Auth/Login';
 import { Register } from './pages/Auth/Register';
+import { AuthCallback } from './pages/Auth/Callback';
 import { LandingPage } from './pages/Landing/LandingPage';
 import { ProjectList } from './pages/Projects/ProjectList';
 import { NewProject } from './pages/Projects/NewProject';
@@ -26,6 +27,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
           
           {/* Public Landing Page */}
           <Route path="/" element={<LandingPage />} />
