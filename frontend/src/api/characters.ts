@@ -53,22 +53,38 @@ export const charactersApi = {
 
     // Upload image if provided
     if (data.image_file) {
-      const fileExt = data.image_file.name.split('.').pop();
-      const id = typeof crypto !== 'undefined' && 'randomUUID' in crypto ? crypto.randomUUID() : String(Math.random()).slice(2);
-      const fileName = `${id}.${fileExt}`;
-      const filePath = `${data.project_id}/${fileName}`;
+      try {
+        const fileExt = data.image_file.name.split('.').pop();
+        const id = typeof crypto !== 'undefined' && 'randomUUID' in crypto ? crypto.randomUUID() : String(Math.random()).slice(2);
+        const fileName = `${id}.${fileExt}`;
+        const filePath = `${data.project_id}/${fileName}`;
 
-      const { error: uploadError } = await supabase.storage
-        .from('characters')
-        .upload(filePath, data.image_file, { contentType: data.image_file.type, upsert: false });
-
-      if (uploadError) {
-        throw uploadError;
-      } else {
-        const { data: { publicUrl } } = supabase.storage
+        const { error: uploadError } = await supabase.storage
           .from('characters')
-          .getPublicUrl(filePath);
-        imageUrl = publicUrl;
+          .upload(filePath, data.image_file, { contentType: data.image_file.type, upsert: false });
+
+        if (uploadError) {
+          console.error('Storage upload error:', uploadError);
+          // 如果存储桶不存在，使用备用方案：将图片转为 base64 存储（不推荐用于生产）
+          imageUrl = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.readAsDataURL(data.image_file!);
+          });
+        } else {
+          const { data: { publicUrl } } = supabase.storage
+            .from('characters')
+            .getPublicUrl(filePath);
+          imageUrl = publicUrl;
+        }
+      } catch (uploadErr) {
+        console.error('Upload exception:', uploadErr);
+        // 备用方案
+        imageUrl = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.readAsDataURL(data.image_file!);
+        });
       }
     }
 
@@ -88,6 +104,7 @@ export const charactersApi = {
       .single();
 
     if (error) {
+      console.error('Character creation error:', error);
       throw error;
     }
 
