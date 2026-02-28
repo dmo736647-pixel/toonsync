@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { createPortal } from 'react-dom';
 
 const translations: Record<string, Record<string, string>> = {
   en: {
@@ -249,9 +248,7 @@ const languageFlags: Record<string, { flag: string; name: string }> = {
 
 export function LandingPage() {
   const [currentLang, setCurrentLang] = useState('en');
-  const [showLangDropdown, setShowLangDropdown] = useState(false);
-  const langButtonRef = useRef<HTMLButtonElement>(null);
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+  const [mounted, setMounted] = useState(false);
   const t = translations[currentLang] || translations.en;
 
   const handleLanguageChange = (lang: string) => {
@@ -285,15 +282,7 @@ export function LandingPage() {
     return () => document.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  useEffect(() => {
-    if (showLangDropdown && langButtonRef.current) {
-      const rect = langButtonRef.current.getBoundingClientRect();
-      setDropdownPosition({
-        top: rect.bottom + 8,
-        left: rect.left
-      });
-    }
-  }, [showLangDropdown]);
+
 
   return (
     <div className="landing-page min-h-screen relative">
@@ -308,98 +297,6 @@ export function LandingPage() {
 
       {/* Main Container */}
       <div className="relative z-10">
-        {/* Top Navigation */}
-        <nav className="neo-glass border-b border-cyan-500/20">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="flex items-center justify-between h-20">
-              <div className="flex items-center space-x-8">
-                <Link to="/" className="group flex items-center gap-4 select-none no-underline">
-                  <div className="relative flex items-center justify-center w-11 h-11">
-                    <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500 to-purple-600 rounded-full blur-xl opacity-20 group-hover:opacity-40 transition-all duration-500 animate-pulse" />
-                    <div className="relative w-full h-full flex items-center justify-center transform group-hover:scale-105 transition-transform duration-300">
-                      <svg className="w-9 h-9" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M4 12C4 7.58172 7.58172 4 12 4C14.5 4 16.5 5 17.5 6.5C16 6.5 15 7.5 15 9C15 11.5 18 12.5 20 12C20 16.4183 16.4183 20 12 20C9.5 20 7.5 19 6.5 17.5C8 17.5 9 16.5 9 15C9 12.5 6 11.5 4 12Z" fill="url(#wave-gradient)" stroke="url(#wave-stroke)" strokeWidth="0.5" />
-                        <path d="M7.5 16C7.5 14 9.5 13.5 11 13.5C12.5 13.5 14.5 13 14.5 11" stroke="white" strokeOpacity="0.5" strokeWidth="1.5" strokeLinecap="round" />
-                        <defs>
-                          <linearGradient id="wave-gradient" x1="4" y1="20" x2="20" y2="4" gradientUnits="userSpaceOnUse">
-                            <stop stopColor="#06b6d4" />
-                            <stop offset="0.5" stopColor="#8b5cf6" />
-                            <stop offset="1" stopColor="#ec4899" />
-                          </linearGradient>
-                          <linearGradient id="wave-stroke" x1="4" y1="4" x2="20" y2="20" gradientUnits="userSpaceOnUse">
-                            <stop stopColor="white" stopOpacity="0.8" />
-                            <stop offset="1" stopColor="white" stopOpacity="0.1" />
-                          </linearGradient>
-                        </defs>
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="flex flex-col">
-                    <div className="flex items-center gap-0.5">
-                      <span className="text-2xl font-semibold tracking-tight text-white font-[Inter]">Toon</span>
-                      <span className="text-2xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white via-cyan-200 to-cyan-400">Sync</span>
-                      <div className="ml-2 w-1.5 h-1.5 rounded-full bg-gradient-to-r from-cyan-400 to-purple-500 animate-pulse" />
-                    </div>
-                    <span className="text-[10px] font-medium text-slate-500 tracking-[0.15em] uppercase group-hover:text-slate-400 transition-colors pl-0.5">{t.navSubtitle}</span>
-                  </div>
-                </Link>
-              </div>
-
-              <div className="flex items-center space-x-6">
-                {/* Language Selector */}
-                <div className="relative lang-dropdown-container" onClick={(e) => e.stopPropagation()}>
-                  <button
-                    ref={langButtonRef}
-                    onClick={() => setShowLangDropdown(!showLangDropdown)}
-                    className="flex items-center space-x-3 neo-glass px-4 py-2 rounded-full hover:bg-white/10 transition-all"
-                  >
-                    <svg className="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                    </svg>
-                    <span className="text-white text-sm font-medium">{languageFlags[currentLang].flag} {languageFlags[currentLang].name}</span>
-                    <svg className="w-3 h-3 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
-                  {showLangDropdown && createPortal(
-                    <div 
-                      className="fixed neo-glass rounded-2xl p-2 w-48 flex flex-col gap-1 border border-white/20 shadow-2xl backdrop-blur-xl bg-black/90"
-                      style={{ 
-                        zIndex: 2147483647,
-                        top: dropdownPosition.top, 
-                        left: dropdownPosition.left,
-                        maxHeight: '300px',
-                        overflowY: 'auto'
-                      }}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {Object.entries(languageFlags).map(([lang, { flag, name }]) => (
-                        <button
-                          key={lang}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleLanguageChange(lang);
-                          }}
-                          className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 transition-all text-white text-sm flex items-center space-x-2 cursor-pointer"
-                        >
-                          <span className="text-lg">{flag}</span>
-                          <span>{name}</span>
-                        </button>
-                      ))}
-                    </div>,
-                    document.body
-                  )}
-                </div>
-
-                {/* Sign In Button */}
-                <Link to="/login" className="px-6 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white rounded-full font-medium transition-all shadow-lg hover:shadow-cyan-500/25">
-                  {t.signIn}
-                </Link>
-              </div>
-            </div>
-          </div>
-        </nav>
-
         {/* Hero Section */}
         <div className="max-w-7xl mx-auto px-6 py-20">
           <div className="text-center space-y-8 mb-16 relative z-10">
