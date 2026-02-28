@@ -19,7 +19,6 @@ import { ExportPage } from './pages/Export/ExportPage';
 import { PaymentPage } from './pages/Payment/PaymentPage';
 import { PaymentSuccess } from './pages/Payment/PaymentSuccess';
 import { Layout } from './components/layout/Layout';
-import { PrivateRoute } from './components/auth/PrivateRoute';
 
 function App() {
   return (
@@ -31,17 +30,9 @@ function App() {
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/debug-auth" element={<DebugAuth />} />
           
-          {/* Public Landing Page */}
-          <Route path="/" element={<LandingPage />} />
-
-          {/* Protected Routes */}
-          <Route
-            element={
-              <PrivateRoute>
-                <Layout />
-              </PrivateRoute>
-            }
-          >
+          {/* All Routes with Layout */}
+          <Route element={<Layout />}>
+            <Route path="/" element={<LandingPage />} />
             <Route path="/projects" element={<ProjectList />} />
             <Route path="/projects/new" element={<NewProject />} />
             <Route path="/projects/:id" element={<ProjectDetail />} />
