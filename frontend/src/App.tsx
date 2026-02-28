@@ -3,6 +3,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { Login } from './pages/Auth/Login';
 import { Register } from './pages/Auth/Register';
 import { AuthCallback } from './pages/Auth/Callback';
+import { DebugAuth } from './pages/Auth/DebugAuth';
 import { LandingPage } from './pages/Landing/LandingPage';
 import { ProjectList } from './pages/Projects/ProjectList';
 import { NewProject } from './pages/Projects/NewProject';
@@ -28,6 +29,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/debug-auth" element={<DebugAuth />} />
           
           {/* Public Landing Page */}
           <Route path="/" element={<LandingPage />} />
