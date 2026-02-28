@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useI18n } from '../../contexts/I18nContext';
 
 const translations = {
   en: {
@@ -83,9 +84,10 @@ export function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+  const { language } = useI18n();
   const navigate = useNavigate();
 
-  const lang: Language = (localStorage.getItem('language') as Language) || 'en';
+  const lang: Language = language;
   const t = translations[lang];
 
   const handleSubmit = async (e: React.FormEvent) => {

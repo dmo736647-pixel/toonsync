@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase.ts';
+import { useI18n } from '../../contexts/I18nContext';
 
 const translations = {
   en: {
@@ -119,8 +120,9 @@ export function Register() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { language } = useI18n();
 
-  const lang: Language = (localStorage.getItem('language') as Language) || 'en';
+  const lang: Language = language;
   const t = translations[lang];
 
   const handleSubmit = async (e: React.FormEvent) => {
