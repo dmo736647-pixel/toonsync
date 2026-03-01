@@ -100,7 +100,22 @@ export function StoryboardCreate() {
       const selectedCharacter = characters.find(c => c.id === characterId);
 
       // Start image generation
-      await storyboardApi.generateImage(storyboard.id, characterId, style, selectedCharacter?.reference_image_url);
+      try {
+        await storyboardApi.generateImage(storyboard.id, characterId, style, selectedCharacter?.reference_image_url);
+      } catch (genErr: any) {
+        console.warn('Image generation failed, but storyboard created:', genErr);
+        // 即使图像生成失败，也继续，因为分镜已经创建成功
+        setError('分镜已创建，但图像生成失败。请稍后重试。');
+        // 不清除 generating 状态，让用户知道还在处理中
+        setGenerating(false);
+        setProgress(100);
+        
+        // 延迟跳转到分镜列表
+        setTimeout(() => {
+          navigate(`/storyboard?project_id=${projectId}`);
+        }, 2000);
+        return; // 提前返回，不执行后面的成功逻辑
+      }
       
       clearInterval(progressInterval);
       setProgress(100);
@@ -108,18 +123,14 @@ export function StoryboardCreate() {
       // Delay navigation slightly to show 100%
       setTimeout(() => {
           setGenerating(false);
-          // If we are in mock mode, maybe navigate back or show success?
           // Navigate back to storyboard list
           navigate(`/storyboard?project_id=${projectId}`);
       }, 500);
 
-      
       // WebSocket will handle progress updates
     } catch (err: any) {
       clearInterval(progressInterval);
       console.error("Create storyboard failed:", err);
-      // Even if failed, if we have a storyboard ID, we might want to navigate back?
-      // No, let user try again.
       setError(err.response?.data?.detail || err.message || '创建分镜失败');
       setGenerating(false);
     } finally {

@@ -253,14 +253,13 @@ export function LandingPage() {
 
   const handleLanguageChange = (lang: string) => {
     setCurrentLang(lang);
-    setShowLangDropdown(false);
   };
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       if (!target.closest('.lang-dropdown-container')) {
-        setShowLangDropdown(false);
+        // 不再需要关闭下拉菜单，因为已经移除了语言选择器
       }
     };
     document.addEventListener('click', handleClickOutside);
