@@ -88,6 +88,12 @@ export const charactersApi = {
       }
     }
 
+    // 获取当前用户 ID
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
     const { data: newCharacter, error } = await supabase
       .from('characters')
       .insert([
@@ -97,7 +103,8 @@ export const charactersApi = {
           description: data.description,
           age: data.age,
           gender: data.gender,
-          reference_image_url: imageUrl
+          reference_image_url: imageUrl,
+          user_id: user.id
         }
       ])
       .select()
