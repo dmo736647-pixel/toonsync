@@ -1,14 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { charactersApi } from '../../api/characters';
 import type { Character } from '../../types';
+
+// 简单的数据缓存
+const charactersCache = new Map<string, { data: Character[]; timestamp: number }>();
+const TTL = 5 * 60 * 1000; // 5 分钟缓存
 
 export function CharacterList() {
   const [searchParams] = useSearchParams();
   const projectId = searchParams.get('project_id');
 
-  const [characters, setCharacters] = useState<Character[]>([]);
-  const [loading, setLoading] = useState(true);
+  const cachedData = projectId ? charactersCache.get(projectId) : null;
+  const [characters, setCharacters] = useState<Character[]>(cachedData?.data || []);
+  const [loading, setLoading] = useState(!cachedData);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -17,20 +22,32 @@ export function CharacterList() {
     }
   }, [projectId]);
 
-  useEffect(() => {
-    loadCharacters();
-  }, [projectId]);
+  const loadCharacters = useCallback(async () => {
+    if (!projectId) return;
 
-  const loadCharacters = async () => {
+    // 检查缓存
+    const cached = charactersCache.get(projectId);
+    const now = Date.now();
+    if (cached && now - cached.timestamp < TTL) {
+      setCharacters(cached.data);
+      setLoading(false);
+      return;
+    }
+
     try {
-      const data = await charactersApi.getCharacters(projectId || undefined);
+      const data = await charactersApi.getCharacters(projectId);
       setCharacters(data);
+      charactersCache.set(projectId, { data, timestamp: now });
     } catch (err: any) {
       setError('加载角色失败');
     } finally {
       setLoading(false);
     }
-  };
+  }, [projectId]);
+
+  useEffect(() => {
+    loadCharacters();
+  }, [loadCharacters]);
 
   const handleDelete = async (id: string) => {
     if (!confirm('确定要删除这个角色吗？')) return;
