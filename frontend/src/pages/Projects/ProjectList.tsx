@@ -3,31 +3,16 @@ import { Link } from 'react-router-dom';
 import { projectsApi } from '../../api/projects';
 import type { Project } from '../../types';
 
-// 简单的数据缓存
-const projectsCache = {
-  data: null as Project[] | null,
-  timestamp: 0,
-  TTL: 5 * 60 * 1000, // 5 分钟缓存
-};
-
 export function ProjectList() {
-  const [projects, setProjects] = useState<Project[]>(projectsCache.data || []);
-  const [loading, setLoading] = useState(!projectsCache.data);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   const loadProjects = useCallback(async () => {
-    // 如果缓存有效，不重新加载
-    const now = Date.now();
-    if (projectsCache.data && now - projectsCache.timestamp < projectsCache.TTL) {
-      setLoading(false);
-      return;
-    }
-
+    setLoading(true);
     try {
       const data = await projectsApi.getProjects();
       setProjects(data);
-      projectsCache.data = data;
-      projectsCache.timestamp = now;
     } catch (err: any) {
       console.error('Failed to load projects:', err);
       setError('无法加载项目列表，请稍后重试');

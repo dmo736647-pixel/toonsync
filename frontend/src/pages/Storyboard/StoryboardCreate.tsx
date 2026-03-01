@@ -56,10 +56,14 @@ export function StoryboardCreate() {
     if (!projectId) return;
 
     try {
+      console.log('Loading characters for project:', projectId);
       const data = await charactersApi.getCharacters(projectId);
-      setCharacters(data.filter(c => c.reference_image_url));
+      console.log('Loaded characters:', data);
+      // 不过滤角色，显示所有角色（即使没有参考图）
+      setCharacters(data);
     } catch (err: any) {
       console.error('Failed to load characters:', err);
+      setError('加载角色列表失败');
     }
   };
 
