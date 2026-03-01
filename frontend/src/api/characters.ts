@@ -238,32 +238,64 @@ export const charactersApi = {
     };
 
     const modelPath = `${character.project_id}/models/${character.id}.json`;
-    const { error: uploadError } = await supabase.storage
-      .from('characters')
-      .upload(modelPath, new Blob([JSON.stringify(model)], { type: 'application/json' }), {
-        contentType: 'application/json',
-        upsert: true,
-      });
+    
+    try {
+      const { error: uploadError } = await supabase.storage
+        .from('characters')
+        .upload(modelPath, new Blob([JSON.stringify(model)], { type: 'application/json' }), {
+          contentType: 'application/json',
+          upsert: true,
+        });
 
-    if (uploadError) {
-      throw uploadError;
+      if (uploadError) {
+        console.warn('Model upload failed, using fallback:', uploadError);
+        // 如果上传失败，直接使用参考图 URL 作为一致性模型 URL
+        const consistencyModelUrl = character.reference_image_url;
+        
+        const { error: updateError } = await supabase
+          .from('characters')
+          .update({ consistency_model_url: consistencyModelUrl, style: 'anime' })
+          .eq('id', id);
+
+        if (updateError) {
+          throw updateError;
+        }
+
+        return { consistency_model_url: consistencyModelUrl };
+      }
+
+      const { data: publicUrlData } = supabase.storage
+        .from('characters')
+        .getPublicUrl(modelPath);
+
+      const consistencyModelUrl = publicUrlData.publicUrl;
+
+      const { error: updateError } = await supabase
+        .from('characters')
+        .update({ consistency_model_url: consistencyModelUrl, style: 'anime' })
+        .eq('id', id);
+
+      if (updateError) {
+        throw updateError;
+      }
+
+      return { consistency_model_url: consistencyModelUrl };
+    } catch (uploadErr) {
+      console.warn('Model upload exception, using reference image URL as fallback:', uploadErr);
+      // 降级方案：直接使用参考图 URL
+      const consistencyModelUrl = character.reference_image_url;
+      
+      const { error: updateError } = await supabase
+        .from('characters')
+        .update({ consistency_model_url: consistencyModelUrl, style: 'anime' })
+        .eq('id', id);
+
+      if (updateError) {
+        console.error('Failed to update character with fallback URL:', updateError);
+        // 即使更新失败，也返回参考图 URL
+      }
+
+      return { consistency_model_url: consistencyModelUrl };
     }
-
-    const { data: publicUrlData } = supabase.storage
-      .from('characters')
-      .getPublicUrl(modelPath);
-
-    const consistencyModelUrl = publicUrlData.publicUrl;
-
-    const { error: updateError } = await supabase
-      .from('characters')
-      .update({ consistency_model_url: consistencyModelUrl, style: 'anime' })
-      .eq('id', id);
-
-    if (updateError) {
-      throw updateError;
-    }
-
-    return { consistency_model_url: consistencyModelUrl };
   },
 };
