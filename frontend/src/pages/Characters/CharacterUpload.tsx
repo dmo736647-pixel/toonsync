@@ -51,11 +51,13 @@ export function CharacterUpload() {
     setLoading(true);
 
     try {
+      console.log('Creating character with project_id:', projectId);
       const character = await charactersApi.createCharacter({
         name,
         project_id: projectId,
         image_file: imageFile,
       });
+      console.log('Character created successfully:', character);
 
       // 自动提取特征
       setExtractingFeatures(true);
@@ -63,11 +65,14 @@ export function CharacterUpload() {
         await charactersApi.extractFeatures(character.id);
         navigate(`/characters/${character.id}?extracted=true`);
       } catch (err) {
+        console.warn('Feature extraction failed:', err);
         // 即使特征提取失败，也跳转到角色详情页
         navigate(`/characters/${character.id}`);
       }
     } catch (err: any) {
-      setError(err.response?.data?.detail || '创建角色失败');
+      console.error('Character creation failed:', err);
+      console.error('Error details:', err.message, err.code, err.hint, err.details);
+      setError(err.message || err.response?.data?.detail || '创建角色失败');
     } finally {
       setLoading(false);
       setExtractingFeatures(false);
